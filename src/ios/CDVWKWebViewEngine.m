@@ -103,7 +103,7 @@
         [wkWebView.scrollView setContentInsetAdjustmentBehavior:UIScrollViewContentInsetAdjustmentNever];
     }
 #endif
-    
+
     wkWebView.UIDelegate = self.uiDelegate;
     self.engineWebView = wkWebView;
 
@@ -133,6 +133,13 @@
         addObserver:self
            selector:@selector(onAppWillEnterForeground:)
                name:UIApplicationWillEnterForegroundNotification object:nil];
+
+    // check for keyboardWillHide event to workaround https://github.com/WebKit/webkit/commit/0ff63c48b7456d6b72b0e751a600d9e3d14dbdeb regression
+    NSLog(@"%@", @"Observing keyboardWillHide event to workaround https://github.com/WebKit/webkit/commit/0ff63c48b7456d6b72b0e751a600d9e3d14dbdeb regression");
+    [[NSNotificationCenter defaultCenter]
+        addObserver:self
+           selector:@selector(keyboardWillHide)
+               name:UIKeyboardWillHideNotification object:nil];
 
     NSLog(@"Using WKWebView");
 
@@ -167,6 +174,18 @@ static void * KVOContext = &KVOContext;
     if ([self shouldReloadWebView]) {
         NSLog(@"%@", @"CDVWKWebViewEngine reloading!");
         [(WKWebView*)_engineWebView reload];
+    }
+}
+
+-(void)keyboardWillHide {
+    if (@available(iOS 12.0, *)) {
+        WKWebView *webview = (WKWebView*)self.webView;
+        for(UIView* v in webview.subviews) {
+            if ([v isKindOfClass:NSClassFromString(@"WKScrollView")]) {
+                UIScrollView *scrollView = (UIScrollView*)v;
+                [scrollView setContentOffset:CGPointMake(0, 0)];
+            }
+        }
     }
 }
 
