@@ -22,7 +22,7 @@
 <plugin xmlns="http://apache.org/cordova/ns/plugins/1.0"
     xmlns:rim="http://www.blackberry.com/ns/widgets"
     xmlns:android="http://schemas.android.com/apk/res/android"
-    id="cordova-plugin-wkwebview-engine"
+    id="cordova-plugin-wkwebview-engine-v2"
     version="1.1.5-dev">
     <name>Cordova WKWebView Engine</name>
     <description>Cordova WKWebView Engine Plugin</description>
